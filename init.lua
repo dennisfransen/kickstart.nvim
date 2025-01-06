@@ -4,7 +4,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = true
+vim.g.have_nerd_font = false
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -809,7 +809,6 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
@@ -874,6 +873,32 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+})
+
+local treesiter = require 'nvim-treesitter.configs'
+local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+parser_config.blade = {
+  install_info = {
+    url = 'https://github.com/EmranMR/tree-sitter-blade',
+    files = { 'src/parser.c' },
+    branch = 'main',
+  },
+  filetype = 'blade',
+}
+
+vim.filetype.add {
+  pattern = {
+    ['.*%.blade%.php'] = 'blade',
+  },
+}
+local bladeGrp
+vim.api.nvim_create_augroup('BladeFiltypeRelated', { clear = true })
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = '*.blade.php',
+  group = bladeGrp,
+  callback = function()
+    vim.opt.filetype = 'blade'
+  end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
